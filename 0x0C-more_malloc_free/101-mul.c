@@ -1,137 +1,126 @@
 #include "main.h"
-#include <stdio.h>
 #include <stdlib.h>
-/**
-  * int_calloc - special calloc but 4 int arrays
-  * @nmemb: n memb
-  * @size: size of array
-  * Return: int *
-  */
-int *int_calloc(int nmemb, unsigned int size)
-{
-	/* declarations */
-	int *p, n;
-	/* checking inputs */
-	if (nmemb == 0 || size == 0)
-		return (NULL);
-	/* malloc the space & check for fail */
-	p = malloc(nmemb * size);
-	if (p == NULL)
-		return (NULL);
-	/* calloc */
-	for (n = 0; n < nmemb; n++)
-		p[n] = 0;
-	return (p);
-}
+#include <stdio.h>
+#include <ctype.h>
 
 /**
-  * mult - multiplication
-  * @product: int * 4 answer
-  * @n1: string num1
-  * @n2: string num2
-  * @len1: len num1
-  * @len2: len num2
-  * Return: void
-  */
-void mult(int *product, char *n1, char *n2, int len1, int len2)
+ * _is_zero - determines if any number is zero
+ * @argv: argument vector.
+ *
+ * Return: no return.
+ */
+void _is_zero(char *argv[])
 {
-	/* declarations */
-	int i;
-	int j;
-	int f1, f2;
-	int sum;
-	/* the long math */
-	for (i = len1 - 1; i >= 0; i--)
-	{
-		sum = 0;
-		f1 = n1[i] - '0';
-		for (j = len2 - 1; j >= 0; j--)
+	int i, isn1 = 1, isn2 = 1;
+
+	for (i = 0; argv[1][i]; i++)
+		if (argv[1][i] != '0')
 		{
-			f2 = n2[j] - '0';
-			sum += product[i + j + 1] + (f1 * f2);
-			product[i + j + 1] = sum % 10;
-			sum /= 10;
+			isn1 = 0;
+			break;
 		}
-		if (sum > 0)
-			product[i + j + 1] += sum;
+
+	for (i = 0; argv[2][i]; i++)
+		if (argv[2][i] != '0')
+		{
+			isn2 = 0;
+			break;
+		}
+
+	if (isn1 == 1 || isn2 == 1)
+	{
+		printf("0\n");
+		exit(0);
 	}
-	for (i = 0; product[i] == 0 && i < len1 + len2; i++)
-	{}
-	if (i == len1 + len2)
-		_putchar('0');
-	for (; i < len1 + len2; i++)
-		_putchar(product[i] + '0');
-	_putchar('\n');
 }
 
 /**
-  * is_valid - is the number a valid one
-  * @num : char string num
-  * Return: int, 1 if true 0 if false
-  */
-int is_valid(char *num)
+ * _initialize_array - set memery to zero in a new array
+ * @ar: char array.
+ * @lar: length of the char array.
+ *
+ * Return: pointer of a char array.
+ */
+char *_initialize_array(char *ar, int lar)
 {
-	/* declarations */
-	int i;
-	/* checking for ints */
-	for (i = 0; num[i]; i++)
-	{
-		if (num[i] < '0' || num[i] > '9')
-			return (0);
-	}
-	return (1);
+	int i = 0;
+
+	for (i = 0; i < lar; i++)
+		ar[i] = '0';
+	ar[lar] = '\0';
+	return (ar);
 }
+
 /**
-  * err - errors r us
-  * @status: error code 4 exit
-  * Return: void
-  */
-void err(int status)
+ * _checknum - determines length of the number
+ * and checks if number is in base 10.
+ * @argv: arguments vector.
+ * @n: row of the array.
+ *
+ * Return: length of the number.
+ */
+int _checknum(char *argv[], int n)
 {
-	_putchar('E');
-	_putchar('r');
-	_putchar('r');
-	_putchar('o');
-	_putchar('r');
-	_putchar('\n');
-	exit(status);
+	int ln;
+
+	for (ln = 0; argv[n][ln]; ln++)
+		if (!isdigit(argv[n][ln]))
+		{
+			printf("Error\n");
+			exit(98);
+		}
+
+	return (ln);
 }
+
 /**
-  * main - getting the args
-  * @argc: args #
-  * @argv: arg array
-  * Return: 0
-  */
-int main(int argc, char **argv)
+ * main - Entry point.
+ * program that multiplies two positive numbers.
+ * @argc: number of arguments.
+ * @argv: arguments vector.
+ *
+ * Return: 0 - success.
+ */
+int main(int argc, char *argv[])
 {
-	/* declarations */
-	int i, j, len1 = 0, len2 = 0;
-	int *res;
-	/* too many args? too few? */
+	int ln1, ln2, lnout, add, addl, i, j, k, ca;
+	char *nout;
+
 	if (argc != 3)
+		printf("Error\n"), exit(98);
+	ln1 = _checknum(argv, 1), ln2 = _checknum(argv, 2);
+	_is_zero(argv), lnout = ln1 + ln2, nout = malloc(lnout + 1);
+	if (nout == NULL)
+		printf("Error\n"), exit(98);
+	nout = _initialize_array(nout, lnout);
+	k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
+	for (; k >= 0; k--, i--)
 	{
-		err(98);
-	}
-	/* using isvalid */
-	for (i = 1; i < argc; i++)
-	{
-		if (!(is_valid(argv[i])))
-			err(98);
-		if (i == 1)
+		if (i < 0)
 		{
-			for (j = 0; argv[i][j]; j++)
-				len1++;
+			if (addl > 0)
+			{
+				add = (nout[k] - '0') + addl;
+				if (add > 9)
+					nout[k - 1] = (add / 10) + '0';
+				nout[k] = (add % 10) + '0';
+			}
+			i = ln1 - 1, j--, addl = 0, ca++, k = lnout - (1 + ca);
 		}
-		if (i == 2)
+		if (j < 0)
 		{
-			for (j = 0; argv[i][j]; j++)
-				len2++;
+			if (nout[0] != '0')
+				break;
+			lnout--;
+			free(nout), nout = malloc(lnout + 1), nout = _initialize_array(nout, lnout);
+			k = lnout - 1, i = ln1 - 1, j = ln2 - 1, ca = addl = 0;
+		}
+		if (j >= 0)
+		{
+			add = ((argv[1][i] - '0') * (argv[2][j] - '0')) + (nout[k] - '0') + addl;
+			addl = add / 10, nout[k] = (add % 10) + '0';
 		}
 	}
-	res = int_calloc(len1 + len2, sizeof(int));
-	if (res == NULL)
-		err(98);
-	mult(res, argv[1], argv[2], len1, len2);
-	free(res);
+	printf("%s\n", nout);
 	return (0);
 }
