@@ -2,24 +2,30 @@
 """Module that calculates the perimeter of an island in a grid."""
 
 
+def num_water_neighbors(grid, i, j):
+    """Returns the number of water neighbors a cell has in a grid."""
+
+    num = 0
+
+    if i <= 0 or not grid[i - 1][j]:
+        num += 1
+    if j <= 0 or not grid[i][j - 1]:
+        num += 1
+    if j >= len(grid[i]) - 1 or not grid[i][j + 1]:
+        num += 1
+    if i >= len(grid) - 1 or not grid[i + 1][j]:
+        num += 1
+
+    return num
+
+
 def island_perimeter(grid):
     """Returns the perimeter of the island in grid."""
 
     perim = 0
-    idx = 0
-    fir = 0
-    for i in grid:
-        con = i.count(1)
-        if con:
-            fir += 1
-            if fir == 1:
-                idx = i.index(1)
-            if con > 1:
-                perim += con
-            else:
-                perim += 1
-        if 1 in i and i.index(1) != idx:
-            break
-    else:
-        return 2 * (perim + 1) if perim > 0 else 0
-    return 0
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            if grid[i][j]:
+                perim += num_water_neighbors(grid, i, j)
+
+    return perim
