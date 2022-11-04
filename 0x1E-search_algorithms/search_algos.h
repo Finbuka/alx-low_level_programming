@@ -1,8 +1,8 @@
-#ifndef SEARCH_ALOGS_H
-#define SEARCH_ALOGS_H
+#ifndef _SEARCH_ALGOS_H_
+#define _SEARCH_ALGOS_H_
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 
 /**
@@ -13,12 +13,13 @@
  * @next: Pointer to the next node
  *
  * Description: singly linked list node structure
+ * for Holberton project
  */
 typedef struct listint_s
 {
-    int n;
-    size_t index;
-    struct listint_s *next;
+	int n;
+	size_t index;
+	struct listint_s *next;
 } listint_t;
 
 /**
